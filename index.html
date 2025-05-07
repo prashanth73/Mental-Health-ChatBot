@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- CSS only -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <!-- JS and jQuery -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <style>
+
+    .banner_image{
+      padding-top: 105px;
+      padding-bottom: 50px;
+      text-align: center;
+      color: #f8f8f8;
+      background: url("https://img.choice.com.au/-/media/3c16ca1dd6834567ac9f24d4eeb9c3ca.ashx?w=660&jq=80%20660w") no-repeat center;
+      background-size: cover;
+    }
+
+    .banner_content{
+      position: relative;
+      padding-top: 6%;
+      padding-bottom: 6%;
+      margin-top: 12%;
+      margin-bottom: 12%;
+      background-color: rgba(0,0,0,0.8);
+      max-width: 660px;
+    }
+
+    .banner_quote{
+      text-align: center;
+      font-size: 18px;
+      font-style: italic;
+      color: white;
+      padding: 10px 20px;
+      font-weight: 600px;
+      font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    }
+
+    .heightClass{
+      min-height: 600px;
+    }
+
+    .chat-window {
+      position: fixed;
+      bottom: 0;
+      right: 20px;
+      width: 50%;
+      max-width: 500px;
+      background-color: #fff;
+      border: 2px solid #007BFF;
+      border-radius: 10px 10px 0 0;
+      box-shadow: 0 0 10px #007BFF;
+    }
+
+    .chat-header {
+      background-color: #007BFF;
+      color: white;
+      padding: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .chat-body {
+      display: none;
+      padding: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .chat-input {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+
+    .chat-input input {
+      flex-grow: 1;
+      padding: 10px;
+      border: none;
+      outline: none;
+    }
+
+    .chat-input button {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    .typing {
+      font-style: italic;
+      color: gray;
+    }
+
+    textarea#userMessage {
+      width: 100%;
+      min-height: 40px;
+      max-height: 150px;
+      resize: none;             
+      overflow-y: auto;         
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+        
+    .restart-btn {
+      display: none;
+      margin-top: 10px;
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .message {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .message.user {
+      justify-content: flex-end;
+    }
+        
+    .message.bot {
+      justify-content: flex-start;
+    }
+        
+    .bubble {
+      padding: 10px;
+      border-radius: 15px;
+      max-width: 80%;
+      background-color: #f1f0f0;
+    }
+        
+    .message.user .bubble {
+      background-color: #d1e7ff;
+    }
+        
+    .avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: #ccc;
+      margin: 0 10px;
+    }
+        
+    .message.user .avatar {
+      background-image: url('https://img.icons8.com/?size=80&id=21350&format=png');
+      background-size: cover;
+    }
+    
+    .message.bot .avatar {
+      background-image: url('https://img.icons8.com/?size=96&id=79UfeEN6JkZ8&format=png');
+      background-size: cover;
+    }
+
+    footer{
+      text-align: center; 
+      background-color:black; 
+      color:#9d9d9d; 
+      border:5px soild black;
+      font-size: medium;
+    }
+
+  </style>
+  <title>Chatbot UI</title>
+</head>
+<body>
+
+  <nav>
+    <div class="container navbar navbar-inverse navbar-fixed-top">
+        <div class="nav navbar-header">
+            <a href=# class="navbar-brand">MOKSHA</a>
+            <button type="button" class="navbar-toggle btn-info" data-toggle="collapse" data-target="#MyNav">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+    </div>
+  </nav>
+
+  <div class="banner_image container">
+    <div class="banner_content container">
+        <h1 style="font-family: 'Times New Roman', Times, serif;">
+          Your Mental Wellness Companion
+        </h1>
+        <h2 style="font-family: 'Times New Roman', Times, serif; font-weight: 300; font-size: large;">
+          Get support for anxiety and stress through guided conversation
+        </h2>
+        <div class="banner_quote">
+          <p>{{quote}}</p>
+        </div>
+        <!--<a href=# class="btn btn-info btn-lg active">Start Chat</a> -->
+        <div class="btn btn-info btn-lg" onclick="toggleChat()">Start Chat</div>
+    </div>
+  </div>
+  <br>
+  
+  <div class="container">
+    <h2>Therapeutic Information</h2>
+    <br>
+    <div class="row">
+        <div class="col-lg-4 col-sm-6">
+            <div class="thumbnail heightClass">
+              <div class="caption">
+                <h3>Anxiety Disorder</h3>
+                <p></p>
+              </div>
+              <img src="https://danielle-dowling.com/wp-content/uploads/2018/10/6_steps_to_calm_anxiety-1.jpg">
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-sm-6">
+            <div class="thumbnail heightClass">
+              <div class="caption">
+                <h3>Depression</h3>
+                <p></p>
+              </div>
+              <img src="https://depdavecomics.com/wp-content/uploads/2018/01/1514879374373.png">
+            </div>
+        </div>    
+        
+        <div class="col-lg-4 col-sm-6">
+            <div class="thumbnail heightClass">
+                <div class="caption">
+                    <h3>Stress and Burnout</h3>
+                    <p></p>
+                </div>
+                <img src="https://www.calmsage.com/wp-content/uploads/2021/10/stress-management-technique.png">
+            </div>
+        </div>
+    </div>
+  </div>
+
+
+  <div class="chat-window">
+    <div class="chat-header" onclick="toggleChat()">Chat with MOKSHA</div>
+    <div class="chat-body" id="chatBody">
+        <div id="chatLog">
+            <div class="message bot"><div class="avatar"></div><div class="bubble">
+              <h3>🧘‍♀️ Welcome to MOKSHA</h3>
+              <p>Your space for peace, clarity and inner balance.</p>
+              <p>I am here to guide you through mindful conversations, emotional support, and moments of calm.</p>
+              <p>How can I help you today?</p>
+              <p>Type "exit" to end the conversation.</p>
+            </div></div>
+        </div>
+        <div class="chat-input">
+            <textarea type="text" id="userMessage" placeholder="Type your message..." ></textarea>
+            <button onclick="sendMessage()">Send</button>
+        </div>
+        <!--<button class="restart-btn" id="restartBtn" onclick="restartChat()">Restart Chat</button>-->
+    </div>
+    <div id="restartBtn" style="display: none; text-align: center; margin-top: 10px;">
+      <button onclick="restartChat()" style="padding: 10px 20px; font-size: 16px; background-color: #333; color: white; border: none; border-radius: 5px;">
+        🔁 Restart Chat
+      </button>
+    </div>
+  </div>
+
+
+  <footer class="container">
+    <div>
+        <p>Copyright &copy; University at Albany, SUNY</p>
+    </div>
+  </footer>
+
+  <script>
+
+    const textarea = document.getElementById("userMessage");
+
+    textarea.addEventListener("keypress", function(event){
+      if(event.key === "Enter" && !event.shiftKey){
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+
+    function toggleChat(){
+      const body = document.getElementById("chatBody");
+      body.style.display = body.style.display === "block" ? "none" : "block";
+      body.style.minHeight = "400px";
+    }
+    
+    function sendMessage() {
+      const input = document.getElementById("userMessage");
+      const message = input.value.trim();
+      if (!message) return;
+
+      const chatLog = document.getElementById("chatLog");
+      const restartBtn = document.getElementById("restartBtn");
+      chatLog.innerHTML += `<div class='message user'><div class='bubble'>${message}</div><div class='avatar'></div></div>`;
+      input.value = "";
+      const typing = document.createElement("p");
+      typing.className = "typing";
+      typing.innerText = "ChatBot is typing...";
+      chatLog.appendChild(typing);
+      chatLog.scrollTop = chatLog.scrollHeight;
+
+      fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message })
+      })
+      .then(res => res.json())
+      .then(data => {
+        chatLog.removeChild(typing);
+        chatLog.innerHTML += `<div class='message bot'><div class='avatar'></div><div class='bubble'>${data.response}</div></div>`;
+        chatLog.scrollTop = chatLog.scrollHeight;
+
+        const chatWindow = document.querySelector(".chat-window")
+        if(data.emotion === "positive"){
+          chatWindow.style.backgroundColor = "#d4edda";
+        }else if(data.emotion === "negative"){
+          chatWindow.style.backgroundColor = "#f8d7da";
+        }else if(data.emotion === "mixed"){
+          chatWindow.style.backgroundColor = "#d1ecf1";
+        }else{
+          chatWindow.style.backgroundColor = "#fff";
+        }
+        
+        if (data.end) {
+          chatLog.innerHTML += `<hr style="border-top: 2px dashed #999; margin: 15px 0;">`;
+          document.querySelector(".chat-input").style.display = "none";
+          restartBtn.style.display = "block";
+        }
+      });
+    }
+
+    function restartChat(){
+      const chatLog = document.getElementById("chatLog");
+      const restartBtn = document.getElementById("restratBtn");
+
+      chatLog.innerHTML = `<div class='message bot'><div class='avatar'></div><div class='bubble'>
+        <h3>🧘‍♀️ Welcome to Moksha</h3>
+              <p>Your space for peace, clarity and inner balance.</p>
+              <p>I am here to guide you through mindful conversations, emotional support, and moments of calm.</p>
+              <p>How can I help you today?</p>
+              <p>Type "exit" to end the conversation.</p>
+      </div></div>`;
+
+      const chatWindow = document.querySelector(".chat-window");
+      chatWindow.style.backgroundColor = "#fff";
+
+      document.querySelector(".chat-input").style.display = "flex";
+      restartBtn.style.display = "none";
+    }
+
+    const quotes = [
+    "Your mental health is a priority. Your happiness is an essential. Your self-care is a necessity.",
+    "It’s okay to not be okay. Just don’t give up.",
+    "Healing takes time, and asking for help is a courageous step.",
+    "You are more than your darkest moments.",
+    "Every day may not be good, but there is something good in every day.",
+    "You don’t have to struggle in silence. Reach out.",
+    "Small progress is still progress. Keep going.",
+    "Mental health is just as important as physical health.",
+    "You are not alone. Someone cares. Someone listens.",
+    "Rest. Breathe. You are doing better than you think."
+    ];
+
+    function showRandomQuote(){
+      const quote = quotes[Math.floor(Math.random() * quotes.length)];
+      document.querySelector(".banner_quote").innerText = quote;
+    }
+
+    window.onload = showRandomQuote;
+
+  </script>
+
+
+  
+</body>
+</html>
